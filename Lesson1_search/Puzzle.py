@@ -30,6 +30,7 @@ class Puzzle:
         :param size:
         '''
         self.size = size
+        self.GOAL = [i for i in range(0,self.size)]
         if size <= 0 or size == None:
             size = 15
         self.dimension = int(math.sqrt(size + 1)) # add 1 to ensure there is an empty space to move blocks with
@@ -73,3 +74,83 @@ class Puzzle:
         for y in range(0,self.dimension):
             for x in range(0,self.dimension):
                 self.map[x][y] = values.pop()
+
+    def getPercentCorrect(self):
+        '''
+
+        :param other:
+        :return:
+        '''
+        num_correct = 0.0
+        for y in range(0,self.dimension):
+            for x in range(0, self.dimension):
+                if self.GOAL[x][y] == self.map[x][y]:
+                    num_correct = num_correct + 1.0
+        percent_correct = num_correct/(self.size + 1)
+        return percent_correct
+
+    def __eq__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() == other.getPercentCorrect():
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() ==  other.getPercentCorrect():
+            return False
+        else:
+            return True
+
+    def __gt__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() >  other.getPercentCorrect():
+            return True
+        else:
+            return False
+
+    def __lt__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() < other.getPercentCorrect():
+            return True
+        else:
+            return False
+
+    def __ge__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() >=  other.getPercentCorrect():
+            return True
+        else:
+            return False
+
+    def __le__(self, other):
+        '''
+
+        :param other:
+        :return:
+        '''
+        if self.getPercentCorrect() <= other.getPercentCorrect():
+            return True
+        else:
+            return False
