@@ -1,9 +1,9 @@
 import sys
-import Puzzle
+from Lesson1_search.Puzzle import Puzzle
 
 
 def main(args):
-    puzzle = Puzzle.Puzzle(15)
+    puzzle = Puzzle(15)
     print(puzzle.toString())
 
 if  __name__ == '__main__':
