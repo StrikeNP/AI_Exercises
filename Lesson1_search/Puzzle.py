@@ -30,14 +30,21 @@ class Puzzle:
         :param size:
         '''
         self.size = size
-        self.GOAL = [i for i in range(0,self.size)]
         if size <= 0 or size == None:
             size = 15
         self.dimension = int(math.sqrt(size + 1)) # add 1 to ensure there is an empty space to move blocks with
+
+        goalValues = [i for i in range(0,self.size + 1)]
+        self.goal = []
+        for y in range (0,self.dimension):
+            self.goal.append([])
+            for x in range (0, self.dimension):
+                self.goal[y].append(goalValues.pop(0))
+
         self.size = self.dimension * self.dimension
-        self.map = [[-1 for i in range(0,size)] for i in range(0,size)] # generate a 2d array and fill it with -1's
-        self.randomize()
+        self.map = [[-1 for i in range(0,self.dimension)] for i in range(0, self.dimension)] # generate a 2d array and fill it with -1's
         self.space = (-1,-1)
+        self.randomize()
 
     def toString(self):
         '''
@@ -109,7 +116,7 @@ class Puzzle:
         num_correct = 0
         for y in range(0,self.dimension):
             for x in range(0, self.dimension):
-                if self.GOAL[x][y] == self.map[x][y]:
+                if self.goal[x][y] == self.map[x][y]:
                     num_correct = num_correct + 1
         return num_correct
 
@@ -138,7 +145,7 @@ class Puzzle:
         :param other:
         :return:
         '''
-        if self.getPercentCorrect() == other.getPercentCorrect():
+        if self.map == other.map:
             return True
         else:
             return False

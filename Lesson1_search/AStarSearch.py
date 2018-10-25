@@ -6,13 +6,13 @@ class Node:
 
     '''
 
-    def __init__(self, parent, state: Puzzle, action, cost):
+    def __init__(self, parent, state: Puzzle, cost):
         '''
 
         '''
         self.parent = parent
         self.state = state
-        self.action = action
+        # self.action = action
         self.cost = cost
 
     def getH(self):
@@ -59,7 +59,8 @@ class Node:
         '''
         if self.state.isNextToSpace(x,y):
             new_node = deepcopy(self)
-            new_node.applyAction(x,y)
+            new_node.state.applyAction(x,y)
+            new_node.action = (x,y)
             new_node.cost =  self.cost + 1
             new_node.parent = self
             return new_node
@@ -73,16 +74,16 @@ class Node:
         '''
         return self.cost + self.getH()
 
-    def __eq__(self, other):
-        '''
-
-        :param other:
-        :return:
-        '''
-        if self.state == other.state:
-            return True
-        else:
-            return False
+    # def __eq__(self, other):
+    #     '''
+    #
+    #     :param other:
+    #     :return:
+    #     '''
+    #     if self.state == other.state:
+    #         return True
+    #     else:
+    #         return False
 
     def __ne__(self, other):
         '''
@@ -144,17 +145,17 @@ class AStarSearch:
     
     '''
 
-    def __init__(self, head: Node, goal: Puzzle):
+    def __init__(self, start_state: Puzzle):
         '''
         
         :param head: 
         :param goal: 
         '''
-        self.head = head
-        self.goal = goal
+        self.head = Node(None, start_state, 0)
+        self.goal = start_state.goal
         self.frontier_nodes = []
         self.expanded_nodes = []
-        self.frontier_nodes.append(head)
+        self.frontier_nodes.append(self.head)
 
     def getNextNode(self):
         '''
@@ -174,4 +175,38 @@ class AStarSearch:
         '''
         bestNode = self.getNextNode()
         for child in bestNode.getChildren():
+            if not self.isNodeExpanded(child):
+                self.frontier_nodes.append(child)
+        self.expanded_nodes.append(bestNode)
+        self.frontier_nodes.remove(bestNode)
+        return bestNode
+
+    def isNodeExpanded(self, node):
+        '''
+
+        :return:
+        '''
+        for expanded_node in self.expanded_nodes:
+            if node.state == expanded_node.state:
+                return True
+            else:
+                return False
+
+
+    def search(self):
+        '''
+
+        :return:
+        '''
+        goalFound = False
+        for child in self.head.getChildren():
             self.frontier_nodes.append(child)
+        previous_state = ""
+        while not goalFound:
+            head = self.popNextNode()
+            if (head == goalFound):
+                goalFound = True
+            if previous_state != head.state.toString():
+                print("New state:\n " + head.state.toString())
+            else:
+                print("No new state")
