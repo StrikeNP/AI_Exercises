@@ -21,7 +21,10 @@ class Node:
         :param node:
         :return:
         '''
-        return self.state.getNumCorrect()
+        h1 = self.state.getNumCorrect()
+        h2 = self.state.distSum()
+        h = max(h1, h2)
+        return h
 
     def getChildren(self):
         '''
@@ -32,19 +35,22 @@ class Node:
 
         action_x = self.state.space[0] + 1
         action_y = self.state.space[1]
-        if self.state.positionExists(action_x,action_y) and (action_x,action_y) != self.state.space:
+        if self.state.positionExists(action_x,action_y):
             children.append(self.getChildAtPos(action_x,action_y))
+
         action_x = self.state.space[0] - 1
         action_y = self.state.space[1]
-        if self.state.positionExists(action_x,action_y) and (action_x,action_y) != self.state.space:
+        if self.state.positionExists(action_x,action_y):
             children.append(self.getChildAtPos(action_x,action_y))
+
         action_x = self.state.space[0]
         action_y = self.state.space[1] + 1
-        if self.state.positionExists(action_x,action_y) and (action_x,action_y) != self.state.space:
+        if self.state.positionExists(action_x,action_y):
             children.append(self.getChildAtPos(action_x,action_y))
+
         action_x = self.state.space[0]
         action_y = self.state.space[1] - 1
-        if self.state.positionExists(action_x,action_y) and (action_x,action_y) != self.state.space:
+        if self.state.positionExists(action_x,action_y):
             children.append(self.getChildAtPos(action_x,action_y))
 
         return children
@@ -59,9 +65,10 @@ class Node:
         '''
         if self.state.isNextToSpace(x,y):
             new_node = deepcopy(self)
-            new_node.state.applyAction(x,y)
-            new_node.action = (x,y)
-            new_node.cost =  self.cost + 1
+            if new_node.state.applyAction(x,y) != None:
+                print("ERROR: invalid action specified!")
+            new_node.action = (x, y)
+            new_node.cost = self.cost + 1
             new_node.parent = self
             return new_node
         else:
@@ -91,7 +98,7 @@ class Node:
         :param other:
         :return:
         '''
-        if self.getF() ==  other.getF():
+        if self.getF() !=  other.getF():
             return False
         else:
             return True
@@ -102,7 +109,7 @@ class Node:
         :param other:
         :return:
         '''
-        if self.getF() >  other.getF():
+        if self.getF() > other.getF():
             return True
         else:
             return False
@@ -115,7 +122,9 @@ class Node:
         '''
         if self.getF() < other.getF():
             return True
+            # print(str(self.getF()) + " < " + str(other.getF()))
         else:
+            # print(str(self.getF()) + " >= " + str(other.getF()))
             return False
 
     def __ge__(self, other):
@@ -124,7 +133,7 @@ class Node:
         :param other:
         :return:
         '''
-        if self.getF() >=  other.getF():
+        if self.getF() >= other.getF():
             return True
         else:
             return False
@@ -152,6 +161,7 @@ class AStarSearch:
         :param goal: 
         '''
         self.head = Node(None, start_state, 0)
+        self.root = self.head
         self.goal = start_state.goal
         self.frontier_nodes = []
         self.expanded_nodes = []
@@ -165,6 +175,7 @@ class AStarSearch:
         currentPick = self.frontier_nodes[0]
         for node in self.frontier_nodes:
             if node < currentPick:
+                # print("node " + str(node.getF()) + " < currentPick " + str(currentPick.getF()))
                 currentPick = node
         return currentPick
 
@@ -192,6 +203,12 @@ class AStarSearch:
             else:
                 return False
 
+    def printTree(self):
+        '''
+
+        :return:
+        '''
+
 
     def search(self):
         '''
@@ -202,11 +219,18 @@ class AStarSearch:
         for child in self.head.getChildren():
             self.frontier_nodes.append(child)
         previous_state = ""
+        loop = 0
         while not goalFound:
             head = self.popNextNode()
             if (head == goalFound):
                 goalFound = True
             if previous_state != head.state.toString():
                 print("New state:\n " + head.state.toString())
+                print("f is  " + str(head.getF()))
             else:
                 print("No new state")
+            # previous_state = head.state.toString()
+            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__sizeof__()) + " Frontier: " + str(self.frontier_nodes.__sizeof__()))
+            loop = loop + 1
+        print("Done!")
+        print(self.head.state.toString())

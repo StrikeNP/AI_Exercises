@@ -1,6 +1,7 @@
 import math
 from random import shuffle
 
+
 class Puzzle:
     '''
 
@@ -32,18 +33,19 @@ class Puzzle:
         self.size = size
         if size <= 0 or size == None:
             size = 15
-        self.dimension = int(math.sqrt(size + 1)) # add 1 to ensure there is an empty space to move blocks with
+        self.dimension = int(math.sqrt(size + 1))  # add 1 to ensure there is an empty space to move blocks with
 
-        goalValues = [i for i in range(0,self.size + 1)]
+        goalValues = [i for i in range(0, self.size + 1)]
         self.goal = []
-        for y in range (0,self.dimension):
+        for y in range(0, self.dimension):
             self.goal.append([])
-            for x in range (0, self.dimension):
+            for x in range(0, self.dimension):
                 self.goal[y].append(goalValues.pop(0))
 
         self.size = self.dimension * self.dimension
-        self.map = [[-1 for i in range(0,self.dimension)] for i in range(0, self.dimension)] # generate a 2d array and fill it with -1's
-        self.space = (-1,-1)
+        self.map = [[-1 for i in range(0, self.dimension)] for i in
+                    range(0, self.dimension)]  # generate a 2d array and fill it with -1's
+        self.space = (-1, -1)
         self.randomize()
 
     def toString(self):
@@ -52,40 +54,39 @@ class Puzzle:
         printed out
         :return: Current game map as a visual string
         '''
-        # TODO return puzzle state as visual string
         map_string = "| -"
-        for x in range(0,self.dimension):
+        for x in range(0, self.dimension):
             map_string = map_string + "----"
         map_string = map_string + " |"
-        for y in range(0,self.dimension):
+        for y in range(0, self.dimension):
             map_string = map_string + "\n|"
             for x in range(0, self.dimension):
                 spacer = " "
-                if self.map[x][y] < 10:
+                if self.map[y][x] < 10:
                     spacer = spacer + " "
-                map_string = map_string  + spacer + str(self.map[x][y]) + " |"
+                map_string = map_string + spacer + str(self.map[y][x]) + " |"
         map_string = map_string + "\n| "
-        for y in range(0,self.dimension):
+        for y in range(0, self.dimension):
             map_string = map_string + "----"
         map_string = map_string + "- |"
         return map_string
-
 
     def randomize(self):
         '''
 
         :return:
         '''
-        # TODO randomize the playspace
-        values = [i for i in range(0,self.size)]
-        shuffle(values)
-        for y in range(0,self.dimension):
-            for x in range(0,self.dimension):
-                if x == 0:
-                    self.space = (x,y)
-                self.map[x][y] = values.pop()
+        # values = [i for i in range(0, self.size)]
+        # shuffle(values)
+        # for y in range(0, self.dimension):
+        #     for x in range(0, self.dimension):
+        #         self.map[y][x] = values.pop()
+        #         if self.map[y][x] == 0:
+        #             self.space = (x, y)
+        self.map = [[15,2,1,12],[8,5,6,11],[4,9,10,7],[3,14,13,0]]
+        self.space = (3,3)
 
-    def positionExists(self,x,y):
+    def positionExists(self, x, y):
         '''
 
         :param x:
@@ -104,7 +105,7 @@ class Puzzle:
         :return:
         '''
         num_correct = self.getNumCorrect()
-        percent_correct = float(num_correct)/float(self.size + 1)
+        percent_correct = float(num_correct) / float(self.size + 1)
         return percent_correct
 
     def getNumCorrect(self):
@@ -114,30 +115,94 @@ class Puzzle:
         :return:
         '''
         num_correct = 0
-        for y in range(0,self.dimension):
+        for y in range(0, self.dimension):
             for x in range(0, self.dimension):
-                if self.goal[x][y] == self.map[x][y]:
+                if self.goal[y][x] == self.map[y][x]:
                     num_correct = num_correct + 1
         return num_correct
 
-    def applyAction(self,x,y):
+    def applyAction(self, x, y):
         '''
 
         :param x:
         :param y:
         :return:
         '''
-        if not self.isNextToSpace(x,y):
+        if not self.isNextToSpace(x, y):
             return -1
-        self.map[self.space[0]][self.space[1]] = self.map[x][y]
-        self.map[x][y] = 0
-        self.space = (x,y)
+        if self.space[0] == x and self.space[1] == y:
+            return -1
+        self.map[self.space[1]][self.space[0]] = self.map[y][x]
+        self.map[y][x] = 0
+        self.space = (x, y)
 
     def isNextToSpace(self, x, y):
-        if self.positionExists(x,y) and (x + 1 ,y) == self.space or (x - 1 ,y) == self.space or (x,y + 1) == self.space or (x,y - 1) == self.space:
+        if self.positionExists(x, y) and (x + 1, y) == self.space or (x - 1, y) == self.space or (
+                x, y + 1) == self.space or (x, y - 1) == self.space:
             return True
         else:
             return False
+
+    def goalIndexOf(self, value):
+        '''
+
+        :param value:
+        :return:
+        '''
+        y = -1
+        x = -1
+        for row in self.goal:
+            y = y + 1
+            try:
+                if row.index(value) >= 0:
+                    x = row.index(value)
+                    break
+            except:
+                continue
+        return (x, y)
+
+    def indexOf(self, value):
+        '''
+
+        :param value:
+        :return:
+        '''
+        y = -1
+        x = -1
+        for row in self.map:
+            y = y + 1
+            try:
+                if row.index(value) >= 0:
+                    x = row.index(value)
+                    break
+            except:
+                continue
+
+        return (x, y)
+
+    def posDistFromGoal(self, value):
+        '''
+
+        :param x:
+        :param y:
+        :return:
+        '''
+        value_pos = self.indexOf(value)
+        goal = self.goalIndexOf(value)
+        x_dist = abs(float(value_pos[0]) - float(goal[0]))
+        y_dist = abs(float(value_pos[1]) - float(goal[1]))
+        dist = math.sqrt((x_dist * x_dist) + (y_dist * y_dist))
+        return dist
+
+    def distSum(self):
+        '''
+
+        :return:
+        '''
+        total = 0
+        for value in range(0, self.size):
+            total = total + self.posDistFromGoal(value)
+        return total
 
     def __eq__(self, other):
         '''
@@ -145,7 +210,7 @@ class Puzzle:
         :param other:
         :return:
         '''
-        if self.map == other.map:
+        if self.toString().__eq__(other.toString()):
             return True
         else:
             return False
@@ -156,7 +221,7 @@ class Puzzle:
         :param other:
         :return:
         '''
-        if self.getPercentCorrect() ==  other.getPercentCorrect():
+        if self.getPercentCorrect() == other.getPercentCorrect():
             return False
         else:
             return True
@@ -167,7 +232,7 @@ class Puzzle:
         :param other:
         :return:
         '''
-        if self.getPercentCorrect() >  other.getPercentCorrect():
+        if self.getPercentCorrect() > other.getPercentCorrect():
             return True
         else:
             return False
@@ -189,7 +254,7 @@ class Puzzle:
         :param other:
         :return:
         '''
-        if self.getPercentCorrect() >=  other.getPercentCorrect():
+        if self.getPercentCorrect() >= other.getPercentCorrect():
             return True
         else:
             return False
