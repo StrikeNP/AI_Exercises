@@ -167,6 +167,30 @@ class AStarSearch:
         self.expanded_nodes = []
         self.frontier_nodes.append(self.head)
 
+    def subtreeToStr(self, subtree_root: Node, depth: int):
+        '''
+
+        :param subtree_root:
+        :param depth: How many nodes deep in the tree subtree_node is, this translates to number of tabs needed
+        :return:
+        '''
+        string_result = str(subtree_root)
+        for node in self.expanded_nodes:
+            if node.parent == subtree_root:
+                string_result = string_result + "\n"
+                for i in range(0,depth):
+                    string_result = string_result + "\t|"
+                depth = depth + 1
+                string_result =  string_result + self.subtreeToStr(node, depth)
+        for node in self.frontier_nodes:
+            if node.parent == subtree_root:
+                string_result = string_result + "\n"
+                for i in range(0,depth):
+                    string_result = string_result + "\t|"
+                depth = depth + 1
+                string_result =  string_result + self.subtreeToStr(node, depth)
+        return string_result
+
     def getNextNode(self):
         '''
         
@@ -224,13 +248,14 @@ class AStarSearch:
             head = self.popNextNode()
             if (head == goalFound):
                 goalFound = True
-            if previous_state != head.state.toString():
-                print("New state:\n " + head.state.toString())
-                print("f is  " + str(head.getF()))
-            else:
-                print("No new state")
+            # if previous_state != head.state.toString():
+            #     # print("New state:\n" + head.state.toString())
+            #     print("f is  " + str(head.getF()))
+            # else:
+            #     print("No new state")
             # previous_state = head.state.toString()
-            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__sizeof__()) + " Frontier: " + str(self.frontier_nodes.__sizeof__()))
+            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " + str(self.frontier_nodes.__len__()))
+            print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")
         print(self.head.state.toString())
