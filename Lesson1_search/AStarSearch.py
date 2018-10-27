@@ -160,6 +160,7 @@ class AStarSearch:
         :param head: 
         :param goal: 
         '''
+        self.max_depth = 0
         self.head = Node(None, start_state, 0)
         self.root = self.head
         self.goal = start_state.goal
@@ -174,21 +175,24 @@ class AStarSearch:
         :param depth: How many nodes deep in the tree subtree_node is, this translates to number of tabs needed
         :return:
         '''
+        # self.max_depth = 0
         string_result = str(subtree_root)
-        for node in self.expanded_nodes:
+        for node in set(self.expanded_nodes + self.frontier_nodes):
             if node.parent == subtree_root:
                 string_result = string_result + "\n"
-                for i in range(0,depth):
+                for i in range(0, depth):
                     string_result = string_result + "\t|"
                 depth = depth + 1
-                string_result =  string_result + self.subtreeToStr(node, depth)
-        for node in self.frontier_nodes:
-            if node.parent == subtree_root:
-                string_result = string_result + "\n"
-                for i in range(0,depth):
-                    string_result = string_result + "\t|"
-                depth = depth + 1
-                string_result =  string_result + self.subtreeToStr(node, depth)
+                if depth > self.max_depth:
+                    self.max_depth = depth
+                string_result = string_result + self.subtreeToStr(node, depth)
+        # for node in self.frontier_nodes:
+        #     if node.parent == subtree_root:
+        #         string_result = string_result + "\n"
+        #         for i in range(0, depth):
+        #             string_result = string_result + "\t|"
+        #         depth = depth + 1
+        #         string_result = string_result + self.subtreeToStr(node, depth)
         return string_result
 
     def getNextNode(self):
@@ -254,7 +258,8 @@ class AStarSearch:
             # else:
             #     print("No new state")
             # previous_state = head.state.toString()
-            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " + str(self.frontier_nodes.__len__()))
+            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
+                  + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
             print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")

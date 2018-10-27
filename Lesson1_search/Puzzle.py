@@ -83,7 +83,7 @@ class Puzzle:
         #         self.map[y][x] = values.pop()
         #         if self.map[y][x] == 0:
         #             self.space = (x, y)
-        self.map = [[15,2,1,12],[8,5,6,11],[4,9,10,7],[3,14,13,0]]
+        self.map = [[1,2,4,7],[13,9,5,3],[15,6,14,8],[10,12,0,11]]
         self.space = (3,3)
 
     def positionExists(self, x, y):
