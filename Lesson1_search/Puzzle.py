@@ -143,54 +143,59 @@ class Puzzle:
         else:
             return False
 
-    def goalIndexOf(self, value):
-        '''
+    # def goalIndexOf(self, value):
+    #     '''
+    #
+    #     :param value:
+    #     :return:
+    #     '''
+    #     y = -1
+    #     x = -1
+    #     for row in self.goal:
+    #         y = y + 1
+    #         try:
+    #             if row.index(value) >= 0:
+    #                 x = row.index(value)
+    #                 break
+    #         except:
+    #             continue
+    #     return (x, y)
 
-        :param value:
-        :return:
-        '''
-        y = -1
-        x = -1
-        for row in self.goal:
-            y = y + 1
-            try:
-                if row.index(value) >= 0:
-                    x = row.index(value)
-                    break
-            except:
-                continue
-        return (x, y)
+    # def indexOf(self, value):
+    #     '''
+    #
+    #     :param value:
+    #     :return:
+    #     '''
+    #     y = -1
+    #     x = -1
+    #     for row in self.map:
+    #         y = y + 1
+    #         try:
+    #             if row.index(value) >= 0:
+    #                 x = row.index(value)
+    #                 break
+    #         except:
+    #             continue
+    #
+    #     return (x, y)
 
-    def indexOf(self, value):
-        '''
-
-        :param value:
-        :return:
-        '''
-        y = -1
-        x = -1
-        for row in self.map:
-            y = y + 1
-            try:
-                if row.index(value) >= 0:
-                    x = row.index(value)
-                    break
-            except:
-                continue
-
-        return (x, y)
-
-    def posDistFromGoal(self, value):
+    def posDistFromGoal(self, x, y):
         '''
 
         :param x:
         :param y:
         :return:
         '''
-        value_pos = self.indexOf(value)
-        goal = self.goalIndexOf(value)
-        x_dist = abs(float(value_pos[0]) - float(goal[0]))
-        y_dist = abs(float(value_pos[1]) - float(goal[1]))
+        # value_pos = self.indexOf(value)
+        value = self.map[y][x]
+        # goal_a = self.goalIndexOf(value)
+        goal_y = int(value / self.dimension)
+        goal_x = value - (goal_y * self.dimension)
+        goal = (goal_x, goal_y)
+        # print("Dim="+str(self.dimension)+"  GoalA=" + str(goal) + "  Goal=" + str(goal))
+        x_dist = abs(float(x) - float(goal[0]))
+        y_dist = abs(float(y - float(goal[1])))
         dist = math.sqrt((x_dist * x_dist) + (y_dist * y_dist))
         return dist
 
@@ -200,8 +205,11 @@ class Puzzle:
         :return:
         '''
         total = 0
-        for value in range(0, self.size):
-            total = total + self.posDistFromGoal(value)
+        # for value in range(0, self.size):
+        #     total = total + self.posDistFromGoal(value)
+        for y in range(0, self.dimension):
+            for x in range(0, self.dimension):
+                total = total + self.posDistFromGoal(x,y)
         return total
 
     def __eq__(self, other):

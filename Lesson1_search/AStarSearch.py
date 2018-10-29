@@ -1,3 +1,5 @@
+import time
+
 from Lesson1_search.Puzzle import Puzzle
 from copy import deepcopy
 
@@ -203,7 +205,6 @@ class AStarSearch:
         currentPick = self.frontier_nodes[0]
         for node in self.frontier_nodes:
             if node < currentPick:
-                # print("node " + str(node.getF()) + " < currentPick " + str(currentPick.getF()))
                 currentPick = node
         return currentPick
 
@@ -212,10 +213,16 @@ class AStarSearch:
 
         :return:
         '''
+        start = time.time()
         bestNode = self.getNextNode()
+        end = time.time()
+        print("Getting node took: " + str(end - start))
+        start = time.time()
         for child in bestNode.getChildren():
             if not self.isNodeExpanded(child):
                 self.frontier_nodes.append(child)
+        end = time.time()
+        print("Getting children took: " + str(end - start))
         self.expanded_nodes.append(bestNode)
         self.frontier_nodes.remove(bestNode)
         return bestNode
