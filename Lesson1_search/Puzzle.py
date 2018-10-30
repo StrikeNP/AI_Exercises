@@ -71,6 +71,18 @@ class Puzzle:
         map_string = map_string + "- |"
         return map_string
 
+    def isGoal(self):
+        '''
+
+        :return:
+        '''
+        for y in range(0,self.dimension):
+            for x in range(0,self.dimension):
+                if self.map[y][x] != self.goal[y][x]:
+                    return False
+        return True
+
+
     def randomize(self):
         '''
 

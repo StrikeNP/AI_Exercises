@@ -257,14 +257,8 @@ class AStarSearch:
         loop = 0
         while not goalFound:
             head = self.popNextNode()
-            if (head == goalFound):
+            if head.state.isGoal():
                 goalFound = True
-            # if previous_state != head.state.toString():
-            #     # print("New state:\n" + head.state.toString())
-            #     print("f is  " + str(head.getF()))
-            # else:
-            #     print("No new state")
-            # previous_state = head.state.toString()
             print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
                   + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
             print(self.subtreeToStr(self.root, 0))
