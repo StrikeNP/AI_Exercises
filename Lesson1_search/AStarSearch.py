@@ -24,7 +24,7 @@ class Node:
         :param node:
         :return:
         '''
-        h1 = self.state.getNumCorrect()
+        h1 = self.state.getNumWrong()
         h2 = self.state.distSum()
         h = max(h1, h2)
         return h
@@ -258,6 +258,12 @@ class AStarSearch:
         previous_state = ""
         loop = 0
         self.max_depth = 0
+
+        print("Starting at:\n")
+        print(self.root.state.toString())
+        print("Goal:")
+        print(self.root.state.goal)
+
         while not goalFound:
             head = self.popNextNode()
             if head.depth > self.max_depth:
@@ -266,6 +272,7 @@ class AStarSearch:
                 goalFound = True
             print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
                   + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
+            print(self.head.state.toString())
             # print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")

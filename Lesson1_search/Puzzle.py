@@ -76,9 +76,11 @@ class Puzzle:
 
         :return:
         '''
+        print("Testing isGoal")
         for y in range(0,self.dimension):
             for x in range(0,self.dimension):
                 if self.map[y][x] != self.goal[y][x]:
+                    print("Node is not goal: " + str(self.map[y][x]) + " != " + str(self.goal[y][x]))
                     return False
         return True
 
@@ -96,7 +98,9 @@ class Puzzle:
         #         if self.map[y][x] == 0:
         #             self.space = (x, y)
         self.map = [[1,2,4,7],[13,9,5,3],[15,6,14,8],[10,12,0,11]]
-        self.space = (3,3)
+        # self.map = [[1,0,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]]
+        self.space = (2,3)
+        # self.space = (1,0)
 
     def positionExists(self, x, y):
         '''
@@ -116,11 +120,11 @@ class Puzzle:
         :param other:
         :return:
         '''
-        num_correct = self.getNumCorrect()
+        num_correct = self.getNumWrong()
         percent_correct = float(num_correct) / float(self.size + 1)
         return percent_correct
 
-    def getNumCorrect(self):
+    def getNumWrong(self):
         '''
 
         :param other:
@@ -131,7 +135,8 @@ class Puzzle:
             for x in range(0, self.dimension):
                 if self.goal[y][x] == self.map[y][x]:
                     num_correct = num_correct + 1
-        return num_correct
+        num_wrong = self.size - num_correct
+        return num_wrong
 
     def applyAction(self, x, y):
         '''
