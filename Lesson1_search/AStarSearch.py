@@ -8,7 +8,7 @@ class Node:
 
     '''
 
-    def __init__(self, parent, state: Puzzle, cost):
+    def __init__(self, parent, state: Puzzle, cost, depth = -1):
         '''
 
         '''
@@ -16,6 +16,7 @@ class Node:
         self.state = state
         # self.action = action
         self.cost = cost
+        self.depth = depth
 
     def getH(self):
         '''
@@ -72,6 +73,7 @@ class Node:
             new_node.action = (x, y)
             new_node.cost = self.cost + 1
             new_node.parent = self
+            new_node.depth = self.depth + 1
             return new_node
         else:
             return None
@@ -163,7 +165,7 @@ class AStarSearch:
         :param goal: 
         '''
         self.max_depth = 0
-        self.head = Node(None, start_state, 0)
+        self.head = Node(None, start_state, 0, 0)
         self.root = self.head
         self.goal = start_state.goal
         self.frontier_nodes = []
@@ -255,13 +257,16 @@ class AStarSearch:
             self.frontier_nodes.append(child)
         previous_state = ""
         loop = 0
+        self.max_depth = 0
         while not goalFound:
             head = self.popNextNode()
+            if head.depth > self.max_depth:
+                self.max_depth =head.depth
             if head.state.isGoal():
                 goalFound = True
             print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
                   + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
-            print(self.subtreeToStr(self.root, 0))
+            # print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")
         print(self.head.state.toString())
