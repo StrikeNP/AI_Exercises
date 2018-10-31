@@ -272,7 +272,7 @@ class AStarSearch:
                 goalFound = True
             print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
                   + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
-            print(self.head.state.toString())
+            # print(self.head.state.toString())
             # print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")

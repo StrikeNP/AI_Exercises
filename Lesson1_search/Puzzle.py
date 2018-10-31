@@ -76,11 +76,11 @@ class Puzzle:
 
         :return:
         '''
-        print("Testing isGoal")
+        # print("Testing isGoal")
         for y in range(0,self.dimension):
             for x in range(0,self.dimension):
                 if self.map[y][x] != self.goal[y][x]:
-                    print("Node is not goal: " + str(self.map[y][x]) + " != " + str(self.goal[y][x]))
+                    # print("Node is not goal: " + str(self.map[y][x]) + " != " + str(self.goal[y][x]))
                     return False
         return True
 
