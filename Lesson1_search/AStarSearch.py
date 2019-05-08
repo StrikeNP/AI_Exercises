@@ -1,3 +1,5 @@
+import heapq
+import re
 import time
 
 from Lesson1_search.Puzzle import Puzzle
@@ -17,6 +19,16 @@ class Node:
         # self.action = action
         self.cost = cost
         self.depth = depth
+
+    def __hash__(self):
+        '''
+
+        :return:
+        '''
+        string_rep = str(self.state.map)
+        hash = re.sub('[^0-9]', '', string_rep)
+        return int(hash)
+
 
     def getH(self):
         '''
@@ -169,7 +181,8 @@ class AStarSearch:
         self.root = self.head
         self.goal = start_state.goal
         self.frontier_nodes = []
-        self.expanded_nodes = []
+        heapq.heapify(self.frontier_nodes)
+        self.expanded_nodes = {}
         self.frontier_nodes.append(self.head)
 
     def subtreeToStr(self, subtree_root: Node, depth: int):
@@ -204,11 +217,13 @@ class AStarSearch:
         
         :return: 
         '''
-        currentPick = self.frontier_nodes[0]
-        for node in self.frontier_nodes:
-            if node < currentPick:
-                currentPick = node
-        return currentPick
+        # currentPick = self.frontier_nodes[0]
+        # for node in self.frontier_nodes:
+        #     if node < currentPick:
+        #         currentPick = node
+        #return currentPick
+        return heapq.heappop(self.frontier_nodes)
+
 
     def popNextNode(self):
         '''
@@ -218,15 +233,16 @@ class AStarSearch:
         start = time.time()
         bestNode = self.getNextNode()
         end = time.time()
-        print("Getting node took: " + str(end - start))
+        # print("Getting node took: " + str(end - start))
         start = time.time()
         for child in bestNode.getChildren():
             if not self.isNodeExpanded(child):
-                self.frontier_nodes.append(child)
+                #self.frontier_nodes.append(child)
+                heapq.heappush(self.frontier_nodes, child)
         end = time.time()
-        print("Getting children took: " + str(end - start))
-        self.expanded_nodes.append(bestNode)
-        self.frontier_nodes.remove(bestNode)
+        # print("Getting children took: " + str(end - start))
+        self.expanded_nodes[bestNode] = bestNode#.append(bestNode)
+        # self.frontier_nodes.remove(bestNode)
         return bestNode
 
     def isNodeExpanded(self, node):
@@ -234,11 +250,15 @@ class AStarSearch:
 
         :return:
         '''
-        for expanded_node in self.expanded_nodes:
-            if node.state == expanded_node.state:
-                return True
-            else:
-                return False
+        # for expanded_node in self.expanded_nodes:
+        #     if node.state == expanded_node.state:
+        #         return True
+        #     else:
+        #         return False
+        if node in self.expanded_nodes.keys():
+            return True
+        else:
+            return False
 
     def printTree(self):
         '''
@@ -265,13 +285,17 @@ class AStarSearch:
         print(self.root.state.goal)
 
         while not goalFound:
-            head = self.popNextNode()
-            if head.depth > self.max_depth:
-                self.max_depth =head.depth
-            if head.state.isGoal():
+            self.head = self.popNextNode()
+            if self.head.depth > self.max_depth:
+                self.max_depth = self.head.depth
+            if self.head.state.isGoal():
                 goalFound = True
-            print("Loop #" + str(loop) + "  Explored: " + str(self.expanded_nodes.__len__()) + " Frontier: " \
-                  + str(self.frontier_nodes.__len__()) + " Max Depth: " + str(self.max_depth))
+            print("Loop #" + str(loop) +
+                  "\tExplored: " + str(self.expanded_nodes.__len__()) +
+                  "\tFrontier: " + str(self.frontier_nodes.__len__()) +
+                  "\tMax Depth: " + str(self.max_depth) +
+                  "\tCost: " + str(self.head.getF()) +
+                  "\tHead: ", self.head)
             # print(self.head.state.toString())
             # print(self.subtreeToStr(self.root, 0))
             loop = loop + 1

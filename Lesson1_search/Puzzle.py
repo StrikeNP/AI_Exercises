@@ -17,7 +17,7 @@ class Puzzle:
     #     self.dimension = dimension
     #     self.map = [dimension][dimension]
 
-    def __init__(self, size):
+    def __init__(self, size = 15):
         '''
         Create a new puzzle map with at most the given size/number of
         squares. The actual number of squares will be the smallest number
@@ -97,10 +97,12 @@ class Puzzle:
         #         self.map[y][x] = values.pop()
         #         if self.map[y][x] == 0:
         #             self.space = (x, y)
-        self.map = [[1,2,4,7],[13,9,5,3],[15,6,14,8],[10,12,0,11]]
+
+        override_map = [[1,2,4,7],[13,9,5,3],[15,6,14,8],[10,12,0,11]]
         # self.map = [[1,0,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]]
-        self.space = (2,3)
+        override_space = (2,3)
         # self.space = (1,0)
+        self.set_puzzle(override_map, override_space)
 
     def positionExists(self, x, y):
         '''
@@ -210,10 +212,11 @@ class Puzzle:
         goal_y = int(value / self.dimension)
         goal_x = value - (goal_y * self.dimension)
         goal = (goal_x, goal_y)
-        # print("Dim="+str(self.dimension)+"  GoalA=" + str(goal) + "  Goal=" + str(goal))
+        #print("Dim="+str(self.dimension)+"  GoalA=" + str(goal) + "  Goal=" + str(goal))
         x_dist = abs(float(x) - float(goal[0]))
         y_dist = abs(float(y - float(goal[1])))
         dist = math.sqrt((x_dist * x_dist) + (y_dist * y_dist))
+        #print("Dist is ", dist)
         return dist
 
     def distSum(self):
@@ -294,3 +297,14 @@ class Puzzle:
             return True
         else:
             return False
+
+    def set_puzzle(self,map, space):
+        '''
+
+        :param map:
+        :param space:
+        :return:
+        '''
+        self.map = map
+        self.space = space
+
