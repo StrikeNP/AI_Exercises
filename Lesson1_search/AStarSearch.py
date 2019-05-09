@@ -97,17 +97,6 @@ class Node:
         '''
         return self.cost + self.getH()
 
-    # def __eq__(self, other):
-    #     '''
-    #
-    #     :param other:
-    #     :return:
-    #     '''
-    #     if self.state == other.state:
-    #         return True
-    #     else:
-    #         return False
-
     def __ne__(self, other):
         '''
 
@@ -138,9 +127,7 @@ class Node:
         '''
         if self.getF() < other.getF():
             return True
-            # print(str(self.getF()) + " < " + str(other.getF()))
         else:
-            # print(str(self.getF()) + " >= " + str(other.getF()))
             return False
 
     def __ge__(self, other):
@@ -203,27 +190,7 @@ class AStarSearch:
                 if depth > self.max_depth:
                     self.max_depth = depth
                 string_result = string_result + self.subtreeToStr(node, depth)
-        # for node in self.frontier_nodes:
-        #     if node.parent == subtree_root:
-        #         string_result = string_result + "\n"
-        #         for i in range(0, depth):
-        #             string_result = string_result + "\t|"
-        #         depth = depth + 1
-        #         string_result = string_result + self.subtreeToStr(node, depth)
         return string_result
-
-    def getNextNode(self):
-        '''
-        
-        :return: 
-        '''
-        # currentPick = self.frontier_nodes[0]
-        # for node in self.frontier_nodes:
-        #     if node < currentPick:
-        #         currentPick = node
-        #return currentPick
-        return heapq.heappop(self.frontier_nodes)
-
 
     def popNextNode(self):
         '''
@@ -231,18 +198,14 @@ class AStarSearch:
         :return:
         '''
         start = time.time()
-        bestNode = self.getNextNode()
+        bestNode = heapq.heappop(self.frontier_nodes)
         end = time.time()
-        # print("Getting node took: " + str(end - start))
         start = time.time()
         for child in bestNode.getChildren():
             if not self.isNodeExpanded(child):
-                #self.frontier_nodes.append(child)
                 heapq.heappush(self.frontier_nodes, child)
         end = time.time()
-        # print("Getting children took: " + str(end - start))
         self.expanded_nodes[bestNode] = bestNode#.append(bestNode)
-        # self.frontier_nodes.remove(bestNode)
         return bestNode
 
     def isNodeExpanded(self, node):
@@ -250,22 +213,10 @@ class AStarSearch:
 
         :return:
         '''
-        # for expanded_node in self.expanded_nodes:
-        #     if node.state == expanded_node.state:
-        #         return True
-        #     else:
-        #         return False
         if node in self.expanded_nodes.keys():
             return True
         else:
             return False
-
-    def printTree(self):
-        '''
-
-        :return:
-        '''
-
 
     def search(self):
         '''
@@ -275,7 +226,6 @@ class AStarSearch:
         goalFound = False
         for child in self.head.getChildren():
             self.frontier_nodes.append(child)
-        previous_state = ""
         loop = 0
         self.max_depth = 0
 
@@ -296,8 +246,21 @@ class AStarSearch:
                   "\tMax Depth: " + str(self.max_depth) +
                   "\tCost: " + str(self.head.getF()) +
                   "\tHead: ", self.head)
-            # print(self.head.state.toString())
-            # print(self.subtreeToStr(self.root, 0))
             loop = loop + 1
         print("Done!")
         print(self.head.state.toString())
+
+
+    def printSolution(self):
+        '''
+        prints each step to the solution to console
+        :return:
+        '''
+        solution_nodes = []
+        solution_nodes.append(self.head)
+        while self.head.parent is not None:
+            self.head = self.head.parent
+            solution_nodes.append(self.head)
+        solution_nodes.reverse()
+        for node in solution_nodes:
+            print(node.state.toString())

@@ -1,22 +1,11 @@
 import math
-from random import shuffle
+import random
 
 
 class Puzzle:
     '''
 
     '''
-
-    # def __init__(self, dimension):
-    #     '''
-    #
-    #     :param dimension:
-    #     '''
-    #     if dimension <= 0 or dimension == None:
-    #         dimension = 15
-    #     self.dimension = dimension
-    #     self.map = [dimension][dimension]
-
     def __init__(self, size = 15):
         '''
         Create a new puzzle map with at most the given size/number of
@@ -35,18 +24,29 @@ class Puzzle:
             size = 15
         self.dimension = int(math.sqrt(size + 1))  # add 1 to ensure there is an empty space to move blocks with
 
-        goalValues = [i for i in range(0, self.size + 1)]
-        self.goal = []
-        for y in range(0, self.dimension):
-            self.goal.append([])
-            for x in range(0, self.dimension):
-                self.goal[y].append(goalValues.pop(0))
-
+        self.goal = self.generate_goal()
         self.size = self.dimension * self.dimension
-        self.map = [[-1 for i in range(0, self.dimension)] for i in
-                    range(0, self.dimension)]  # generate a 2d array and fill it with -1's
-        self.space = (-1, -1)
-        self.randomize()
+        self.map = self.generate_goal()
+        self.space = (0, 0)
+
+
+    def generate_goal(self):
+        '''
+        Generate the incrementing map goal state
+        Example
+        0,1,2,3
+        4,5,6,7
+        8,9,10,11
+        12,13,14,15
+        :return: The desired goal state
+        '''
+        goalValues = [i for i in range(0, self.size + 1)]
+        goal = []
+        for y in range(0, self.dimension):
+            goal.append([])
+            for x in range(0, self.dimension):
+                goal[y].append(goalValues.pop(0))
+        return goal
 
     def toString(self):
         '''
@@ -85,24 +85,35 @@ class Puzzle:
         return True
 
 
-    def randomize(self):
+    def shuffle(self, num_moves = 10):
         '''
-
+        Apply num_moves amount of random plays/
+        moves to the game board
+        :param num_moves:
         :return:
         '''
-        # values = [i for i in range(0, self.size)]
-        # shuffle(values)
-        # for y in range(0, self.dimension):
-        #     for x in range(0, self.dimension):
-        #         self.map[y][x] = values.pop()
-        #         if self.map[y][x] == 0:
-        #             self.space = (x, y)
+        for i in range(num_moves):
+            move_successful = False
+            prev_direction = -1
+            up = 0
+            down = 1
+            left = 2
+            right = 3
+            while move_successful is False:
+                direction = random.randint(0, 3)
+                if direction == up and prev_direction != down:
+                    move_successful = self.move_up()
+                    prev_direction = up
+                if direction == down and prev_direction != up:
+                    move_successful = self.move_down()
+                    prev_direction = down
+                if direction == left and prev_direction != right:
+                    move_successful = self.move_left()
+                    prev_direction = left
+                if direction == right and prev_direction != left:
+                    move_successful = self.move_right()
+                    prev_direction = right
 
-        override_map = [[1,2,4,7],[13,9,5,3],[15,6,14,8],[10,12,0,11]]
-        # self.map = [[1,0,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]]
-        override_space = (2,3)
-        # self.space = (1,0)
-        self.set_puzzle(override_map, override_space)
 
     def positionExists(self, x, y):
         '''
@@ -142,11 +153,14 @@ class Puzzle:
 
     def applyAction(self, x, y):
         '''
-
+        Move the space to an x,y coordinate
+        adjacent to the space's current position
         :param x:
         :param y:
         :return:
         '''
+        if not self.positionExists(x, y):
+            return -1
         if not self.isNextToSpace(x, y):
             return -1
         if self.space[0] == x and self.space[1] == y:
@@ -162,43 +176,6 @@ class Puzzle:
         else:
             return False
 
-    # def goalIndexOf(self, value):
-    #     '''
-    #
-    #     :param value:
-    #     :return:
-    #     '''
-    #     y = -1
-    #     x = -1
-    #     for row in self.goal:
-    #         y = y + 1
-    #         try:
-    #             if row.index(value) >= 0:
-    #                 x = row.index(value)
-    #                 break
-    #         except:
-    #             continue
-    #     return (x, y)
-
-    # def indexOf(self, value):
-    #     '''
-    #
-    #     :param value:
-    #     :return:
-    #     '''
-    #     y = -1
-    #     x = -1
-    #     for row in self.map:
-    #         y = y + 1
-    #         try:
-    #             if row.index(value) >= 0:
-    #                 x = row.index(value)
-    #                 break
-    #         except:
-    #             continue
-    #
-    #     return (x, y)
-
     def posDistFromGoal(self, x, y):
         '''
 
@@ -206,18 +183,59 @@ class Puzzle:
         :param y:
         :return:
         '''
-        # value_pos = self.indexOf(value)
         value = self.map[y][x]
-        # goal_a = self.goalIndexOf(value)
         goal_y = int(value / self.dimension)
         goal_x = value - (goal_y * self.dimension)
         goal = (goal_x, goal_y)
-        #print("Dim="+str(self.dimension)+"  GoalA=" + str(goal) + "  Goal=" + str(goal))
         x_dist = abs(float(x) - float(goal[0]))
         y_dist = abs(float(y - float(goal[1])))
         dist = math.sqrt((x_dist * x_dist) + (y_dist * y_dist))
-        #print("Dist is ", dist)
         return dist
+
+    def move_up(self):
+        '''
+        Move the space up one square if possible, otherwise
+        do nothing
+        :return: True if move succeeds, false otherwise
+        '''
+        space_x, space_y = self.space
+        if self.applyAction(space_x, space_y - 1) == -1:
+            return False
+        return True
+
+
+    def move_down(self):
+        '''
+        Move the space down one square if possible, otherwise
+        do nothing
+        :return: True if move succeeds, false otherwise
+        '''
+        space_x, space_y = self.space
+        if self.applyAction(space_x, space_y + 1) == -1:
+            return False
+        return True
+
+    def move_left(self):
+        '''
+        Move the space left one square if possible, otherwise
+        do nothing
+        :return: True if move succeeds, false otherwise
+        '''
+        space_x, space_y = self.space
+        if self.applyAction(space_x - 1, space_y) == -1:
+            return False
+        return True
+
+    def move_right(self):
+        '''
+        Move the space right one square if possible, otherwise
+        do nothing
+        :return: True if move succeeds, false otherwise
+        '''
+        space_x, space_y = self.space
+        if self.applyAction(space_x + 1, space_y) == -1:
+            return False
+        return True
 
     def distSum(self):
         '''
@@ -225,8 +243,6 @@ class Puzzle:
         :return:
         '''
         total = 0
-        # for value in range(0, self.size):
-        #     total = total + self.posDistFromGoal(value)
         for y in range(0, self.dimension):
             for x in range(0, self.dimension):
                 total = total + self.posDistFromGoal(x,y)
