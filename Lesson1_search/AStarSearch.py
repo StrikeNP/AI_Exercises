@@ -1,6 +1,5 @@
 import heapq
 import re
-import time
 
 from Lesson1_search.Puzzle import Puzzle
 from copy import deepcopy
@@ -171,6 +170,7 @@ class AStarSearch:
         heapq.heapify(self.frontier_nodes)
         self.expanded_nodes = {}
         self.frontier_nodes.append(self.head)
+        self.solution_len = -1
 
     def subtreeToStr(self, subtree_root: Node, depth: int):
         '''
@@ -197,14 +197,10 @@ class AStarSearch:
 
         :return:
         '''
-        start = time.time()
         bestNode = heapq.heappop(self.frontier_nodes)
-        end = time.time()
-        start = time.time()
         for child in bestNode.getChildren():
             if not self.isNodeExpanded(child):
                 heapq.heappush(self.frontier_nodes, child)
-        end = time.time()
         self.expanded_nodes[bestNode] = bestNode#.append(bestNode)
         return bestNode
 
@@ -229,10 +225,10 @@ class AStarSearch:
         loop = 0
         self.max_depth = 0
 
-        print("Starting at:\n")
-        print(self.root.state.toString())
-        print("Goal:")
-        print(self.root.state.goal)
+        # print("Starting at:\n")
+        # print(self.root.state.toString())
+        # print("Goal:")
+        # print(self.root.state.goal)
 
         while not goalFound:
             self.head = self.popNextNode()
@@ -251,9 +247,9 @@ class AStarSearch:
         print(self.head.state.toString())
 
 
-    def printSolution(self):
+    def getSolution(self):
         '''
-        prints each step to the solution to console
+
         :return:
         '''
         solution_nodes = []
@@ -262,5 +258,15 @@ class AStarSearch:
             self.head = self.head.parent
             solution_nodes.append(self.head)
         solution_nodes.reverse()
+        self.solution_len = len(solution_nodes)
+        return solution_nodes
+
+
+    def printSolution(self):
+        '''
+        prints each step to the solution to console
+        :return:
+        '''
+        solution_nodes = self.getSolution()
         for node in solution_nodes:
             print(node.state.toString())
