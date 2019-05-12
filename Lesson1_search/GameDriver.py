@@ -7,17 +7,24 @@ from Lesson1_search.AStarSearch import AStarSearch
 
 
 def main(args):
-    num_trials = 1
+    num_trials = 10000
     solution_times = []
     solution_sizes = []
+    plot_every = 500
+    max_len = 20
 
-    for i in range(num_trials):
-        print("\rRunning game number ", i+1, '/', num_trials)
-        runtime, solution_size = run_timed_search(max_len=20)
+    for i in range(1,num_trials+1):
+        print("\rRunning game number ", i, '/', num_trials)
+        runtime, solution_size = run_timed_search(max_len=max_len)
         solution_times.append(runtime)
         solution_sizes.append(solution_size)
-    plotScatter(solution_sizes, solution_times, "A_Star_time-to-solution", "Length of solution", "Time taken to solve (s)")
-    print("Solution:\n")
+        with open('data.csv', 'a') as fd:
+            fd.write(str(solution_size) + "," + str(runtime)+"\n")
+        if i % plot_every == 0:
+            plotScatter(solution_sizes, solution_times, "A_Star_time-to-solution_" + str(i)+"-samples_max-len-" + str(max_len), "Length of solution",
+                        "Time taken to solve (s)")
+    # plotScatter(solution_sizes, solution_times, "A_Star_time-to-solution", "Length of solution", "Time taken to solve (s)")
+    # print("Solution:\n")
     # a_star.printSolution()
 
 
@@ -46,8 +53,8 @@ def run_timed_search(max_len = 20):
     a_star = AStarSearch(puzzle)
     a_star.search()
     runtime = time.time() - starttime
-    # a_star.getSolution()
-    a_star.printSolution()
+    a_star.getSolution()
+    # a_star.printSolution()
     solution_size = a_star.solution_len
     # frontier_size
     return runtime, solution_size

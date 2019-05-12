@@ -236,15 +236,15 @@ class AStarSearch:
                 self.max_depth = self.head.depth
             if self.head.state.isGoal():
                 goalFound = True
-            print("Loop #" + str(loop) +
-                  "\tExplored: " + str(self.expanded_nodes.__len__()) +
-                  "\tFrontier: " + str(self.frontier_nodes.__len__()) +
-                  "\tMax Depth: " + str(self.max_depth) +
-                  "\tCost: " + str(self.head.getF()) +
-                  "\tHead: ", self.head)
+            # print("Loop #" + str(loop) +
+            #       "\tExplored: " + str(self.expanded_nodes.__len__()) +
+            #       "\tFrontier: " + str(self.frontier_nodes.__len__()) +
+            #       "\tMax Depth: " + str(self.max_depth) +
+            #       "\tCost: " + str(self.head.getF()) +
+            #       "\tHead: ", self.head)
             loop = loop + 1
-        print("Done!")
-        print(self.head.state.toString())
+        # print("Done!")
+        # print(self.head.state.toString())
 
 
     def getSolution(self):
